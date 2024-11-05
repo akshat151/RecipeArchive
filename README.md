@@ -3,8 +3,8 @@ An iOS app built with SwiftUI that lets you explore food recipes from around the
 
 ## Requirements
 
-Minimum iOS Version: 16.0
-Xcode: Version 15 or higher
+- **Minimum iOS Version**: 16.0
+- **Xcode**: Version 16 or higher
 
 ## Steps to Run the App
 
