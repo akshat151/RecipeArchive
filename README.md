@@ -1,6 +1,11 @@
 # RecipeArchive
 An iOS app built with SwiftUI that lets you explore food recipes from around the world.
 
+## Requirements
+
+Minimum iOS Version: 16.0
+Xcode: Version 15 or higher
+
 ## Steps to Run the App
 
 1. **Clone the repository**: Clone this repository using `git clone https://github.com/akshat151/RecipeArchive.git`.
