@@ -3,7 +3,7 @@ An iOS app built with SwiftUI that lets you explore food recipes from around the
 
 ## Steps to Run the App
 
-1. **Clone the repository**: Clone this repository using `git clone <repository-url>`.
+1. **Clone the repository**: Clone this repository using `git clone [<repository-url>](https://github.com/akshat151/RecipeArchive.git)`.
 2. **Open the project**: Launch Xcode, and open the `.xcodeproj` file.
 3. **Install dependencies**: Install Kingfisher via the Swift Package Manager in Xcode. In Xcode: File > Add Packages, Enter: https://github.com/onevcat/Kingfisher.git and Select version 8.1.0.
 4. **Set up the environment**: Ensure any required environment variables or API keys are configured.
