@@ -105,31 +105,31 @@ final class RecipeArchiveTests: XCTestCase {
     
     /// Tests the scenario where empty but valid JSON data is fetched. This test ensures the app handles the absence of expected recipe data correctly, without crashing or misinterpreting the data structure.
     func testEmptyData() async throws {
-            let emptyJSONData = "{ empty json".data(using: .utf8)!
-            MockURLProtocol.requestHandler = { request in
-                return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, emptyJSONData)
-            }
-            
-            // Initialize service and view model
-            let service = NetworkUtility(baseURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json")!)
-            let viewModel = await RecipeViewModel(networkUtility: service)
-            
-            // Perform action
-            await viewModel.loadRecipes()
-            
-            // Wait for updates to be posted to the main actor
-            await MainActor.run {
-                // Now check values within the main actor context
-                XCTAssertEqual(viewModel.recipes.count, 0, "The recipe count should be 0 due to empty data")
-                XCTAssertTrue(viewModel.showError, "The view model should show an error")
-                XCTAssertEqual(viewModel.error, .decodingError, "The expected error should be decodingError")
-            }
+        let emptyJSONData = "{ empty json".data(using: .utf8)!
+        MockURLProtocol.requestHandler = { request in
+            return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, emptyJSONData)
         }
+        
+        // Initialize service and view model
+        let service = NetworkUtility(baseURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json")!)
+        let viewModel = await RecipeViewModel(networkUtility: service)
+        
+        // Perform action
+        await viewModel.loadRecipes()
+        
+        // Wait for updates to be posted to the main actor
+        await MainActor.run {
+            // Now check values within the main actor context
+            XCTAssertEqual(viewModel.recipes.count, 0, "The recipe count should be 0 due to empty data")
+            XCTAssertTrue(viewModel.showError, "The view model should show an error")
+            XCTAssertEqual(viewModel.error, .decodingError, "The expected error should be decodingError")
+        }
+    }
     
     
     /// Test correct handling of valid JSON data from a functional URL, expecting the view model to update the recipe list correctly without errors.
     func testValidDataFromValidURL() async throws {
-        let validJSONData = "{}".data(using: .utf8)!  // Use actual valid JSON for this scenario.
+        let validJSONData = "{}".data(using: .utf8)!
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, validJSONData)
         }
@@ -171,6 +171,108 @@ final class RecipeArchiveTests: XCTestCase {
             XCTAssertFalse(viewModel.isLoading)
             XCTAssertTrue(viewModel.showError, "The view model should show an error when the response is invalid")
             XCTAssertEqual(viewModel.error, .invalidResponse, "The expected error should be invalidResponse")
+        }
+    }
+    
+    /// Tests the initial list of cuisines populated after fetching recipes.
+    func testInitialCuisineListPopulation() async {
+        let validJSONData = "{}".data(using: .utf8)!
+        MockURLProtocol.requestHandler = { request in
+            return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, validJSONData)
+        }
+        
+        let service = NetworkUtility(baseURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!)
+        let viewModel = await RecipeViewModel(networkUtility: service)
+        
+        await viewModel.loadRecipes()
+        
+        await MainActor.run {
+            XCTAssertTrue(viewModel.cuisines.contains("All"), "Initial cuisines should include 'All'")
+            XCTAssertTrue(viewModel.cuisines.contains("Italian"), "Cuisines should include 'Italian'")
+            XCTAssertTrue(viewModel.cuisines.contains("French"), "Cuisines should include 'French'")
+            XCTAssertTrue(viewModel.cuisines.contains("Greek"), "Cuisines should include 'Japanese'")
+        }
+    }
+    
+    /// Tests filtering by a specific cuisine and ensuring the correct recipes are shown.
+    func testFilterBySpecificCuisine() async {
+        let validJSONData = "{}".data(using: .utf8)!
+        MockURLProtocol.requestHandler = { request in
+            return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, validJSONData)
+        }
+        
+        let service = NetworkUtility(baseURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!)
+        let viewModel = await RecipeViewModel(networkUtility: service)
+        
+        await viewModel.loadRecipes()
+        
+        await MainActor.run {
+            viewModel.selectedCuisine = "Italian"
+            viewModel.filterRecipes()
+            XCTAssertEqual(viewModel.filteredRecipes.count, 1, "Should filter to one Italian recipes")
+            for recipe in viewModel.filteredRecipes {
+                XCTAssertEqual(recipe.cuisine, "Italian", "Filtered recipes should only include Italian cuisine")
+            }
+        }
+    }
+    
+    /// Tests filtering by a specific cuisine and ensuring the correct recipes are shown.
+    func testFilterBySpecificCuisineWhichIsNotAvailable() async {
+        let validJSONData = "{}".data(using: .utf8)!
+        MockURLProtocol.requestHandler = { request in
+            return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, validJSONData)
+        }
+        
+        let service = NetworkUtility(baseURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!)
+        let viewModel = await RecipeViewModel(networkUtility: service)
+        
+        await viewModel.loadRecipes()
+        
+        await MainActor.run {
+            viewModel.selectedCuisine = "Japanese"
+            viewModel.filterRecipes()
+            XCTAssertEqual(viewModel.filteredRecipes.count, 0, "Should filter to 0 Japanese recipes")
+            for recipe in viewModel.filteredRecipes {
+                XCTAssertEqual(recipe.cuisine, "Japanese", "Filtered recipes should not only include any Japanese cuisine")
+            }
+        }
+    }
+    
+    /// Tests the 'All' filter to ensure all recipes are displayed.
+    func testFilterByAllCuisine() async {
+        let validJSONData = "{}".data(using: .utf8)!
+        MockURLProtocol.requestHandler = { request in
+            return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, validJSONData)
+        }
+        
+        let service = NetworkUtility(baseURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!)
+        let viewModel = await RecipeViewModel(networkUtility: service)
+        
+        await viewModel.loadRecipes()
+        
+        await MainActor.run {
+            viewModel.selectedCuisine = "All"
+            viewModel.filterRecipes()
+            XCTAssertEqual(viewModel.filteredRecipes.count, 63, "Filtering by 'All' should return all recipes")
+        }
+    }
+    
+    /// Tests the filter with no matching cuisine resulting in an empty list.
+    func testFilterWithNoMatchingCuisine() async {
+        let validJSONData = "{}".data(using: .utf8)!
+        MockURLProtocol.requestHandler = { request in
+            return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, validJSONData)
+        }
+        
+        let service = NetworkUtility(baseURL: URL(string: "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!)
+        let viewModel = await RecipeViewModel(networkUtility: service)
+        
+        await viewModel.loadRecipes()
+        
+        await MainActor.run {
+            viewModel.selectedCuisine = "Mexican"
+            viewModel.filterRecipes()
+            XCTAssertTrue(viewModel.filteredRecipes.isEmpty, "No matching cuisine should result in an empty filtered list")
         }
     }
     
@@ -239,7 +341,7 @@ class MockURLProtocol: URLProtocol {
     }
     
     override func stopLoading() {
-        // This method is required but does not need to do anything for our mocks.
+    
     }
 }
 

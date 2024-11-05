@@ -8,31 +8,37 @@
 import Foundation
 import SwiftUI
 
-/// Marks the class to be used from the main actor, ensuring that updates to the published properties are thread-safe and UI-related changes occur on the main thread.
+/// ViewModel to manage recipes, handling network operations, filtering, and navigation states.
 @MainActor
 class RecipeViewModel: ObservableObject {
-    @Published var recipes: [Recipe] = []            // The list of recipes loaded from the network.
-    @Published var isLoading = false                 // Tracks loading state of recipe data.
-    @Published var error: NetworkErrorManager?       // Holds any network error that occurs.
-    @Published var showError = false                 // Controls the visibility of error alerts.
-    @Published var selectedRecipe: Recipe?           // Holds the currently selected recipe for detailed view.
-    @Published var isShowingDetail = false           // Indicates whether the detail view is being shown.
-    @Published var showURLAlert = false              // Controls the display of URL related alerts.
-    @Published var alertMessage = ""                 // Message to be displayed in alerts for URL errors.
+    @Published var recipes: [Recipe] = []
+    @Published var filteredRecipes: [Recipe] = []
+    @Published var isLoading = false
+    @Published var error: NetworkErrorManager?
+    @Published var showError = false
+    @Published var selectedRecipe: Recipe?
+    @Published var isShowingDetail = false
+    @Published var showURLAlert = false
+    @Published var alertMessage = ""
+    @Published var selectedCuisine: String = "All"
+    @Published var cuisines: [String] = ["All"]
     
     private let networkUtility: NetworkUtilityProtocol
     
     init(networkUtility: NetworkUtilityProtocol = NetworkUtility()) {
         self.networkUtility = networkUtility
+        Task { await loadRecipes() }
     }
     
-    /// Asynchronously loads recipes from the network, updating the UI state accordingly.
     func loadRecipes() async {
         isLoading = true
         error = nil
         
         do {
             recipes = try await networkUtility.fetchRecipes()
+            cuisines = Array(Set(recipes.map { $0.cuisine })).sorted()
+            cuisines.insert("All", at: 0)
+            filterRecipes()
         } catch let error as NetworkErrorManager {
             self.error = error
             self.showError = true
@@ -44,7 +50,14 @@ class RecipeViewModel: ObservableObject {
         isLoading = false
     }
     
-    /// Opens a URL and displays an alert if the URL is invalid.
+    func filterRecipes() {
+        if selectedCuisine == "All" {
+            filteredRecipes = recipes
+        } else {
+            filteredRecipes = recipes.filter { $0.cuisine == selectedCuisine }
+        }
+    }
+    
     func openURL(_ urlString: String?) {
         guard let urlString = urlString,
               let url = URL(string: urlString),
@@ -53,8 +66,6 @@ class RecipeViewModel: ObservableObject {
             showURLAlert = true
             return
         }
-        
-        DispatchQueue.main.async{ UIApplication.shared.open(url)}
+        DispatchQueue.main.async { UIApplication.shared.open(url) }
     }
-    
 }

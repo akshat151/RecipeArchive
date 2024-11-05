@@ -10,7 +10,7 @@ import Kingfisher
 /// A view representing a single cell in a recipe list.
 struct RecipeListCellView: View {
     
-    let recipe: Recipe // The recipe data for the cell.
+    let recipe: Recipe
     
     var body: some View {
         HStack {
