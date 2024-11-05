@@ -30,9 +30,11 @@ I allocated approximately 7 hours to this project:
 
 ## Trade-offs and Decisions
 
-To balance time constraints and achieve a functioning app, I made the following trade-offs:
-- **UI Complexity**: Opted for a straightforward and functional UI to ensure reliable app performance, postponing more complex UI features for future updates.
-- **External Libraries**: Decided to avoid third-party libraries for networking and JSON decoding, using native tools instead to keep the code lightweight and maintainable.
+To balance functionality, performance, and maintainability within the given timeline, I made the following trade-offs:
+
+- **UI Complexity**: I prioritized a straightforward, functional UI to ensure reliable performance, deferring more complex, visually rich elements to potential future updates.
+- **Image Caching with Kingfisher**: Rather than implementing a custom image downloading and caching solution, I chose to use Kingfisher. This decision was based on the library’s robust performance, streamlined API, and efficient handling of asynchronous image loading and caching. Kingfisher helped reduce development time and improve app responsiveness by handling network requests and caching seamlessly, which was essential given the image-centric nature of a recipe app.
+- **External Libraries for Networking and JSON Parsing**: Opted to stick with native libraries for networking and JSON decoding (URLSession and Codable) rather than third-party options, as these tools provided the necessary functionality without adding extra dependencies, simplifying maintenance and reducing potential for bugs.
 
 ## Weakest Part of the Project
 
