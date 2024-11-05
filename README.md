@@ -51,5 +51,5 @@ To balance functionality, performance, and maintainability within the given time
 ## Additional Information
 
 - **Concurrency Management**: Handling asynchronous data fetching and UI updates required careful concurrency management. Swift’s concurrency features helped maintain a smooth user experience but required additional debugging and adjustments to fully integrate.
-- **Future Enhancements**: Potential future features include a more advanced caching mechanism for offline functionality, an improved User Interface and an extended recipe model to incorporate detailed nutritional information for each recipe.
+- **Future Enhancements**: Potential future features include a more advanced caching mechanism for offline functionality, an improved User Interface, better Test Coverage with more focus on UI Tests as well as integration tests and an extended recipe model to incorporate detailed nutritional information for each recipe.
 
