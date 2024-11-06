@@ -6,6 +6,16 @@ An iOS app built with SwiftUI that lets you explore food recipes from around the
 - **Minimum iOS Version**: 16.0
 - **Xcode**: Version 16 or higher
 
+### Features
+
+- **Recipe List with Pull-to-Refresh**: Allows users to pull down on the recipe list at any time to quickly refresh and load the latest recipes.
+  
+- **Cuisine Type Filter**: A filter button in the top-right corner lets users filter recipes by cuisine type. By default, All cuisines are displayed.
+
+- **Recipe Detail Pop-Up**: Tapping on a recipe opens a pop-up with options to navigate to the recipe's URL or watch it's YouTube video outside of the App, enhancing interactivity.
+
+- **Single-Screen UI**: The app features a streamlined single-screen layout displaying the recipe list and filter button, promoting easy navigation and focus on recipe content.
+
 ## Steps to Run the App
 
 1. **Clone the repository**: Clone this repository using `git clone https://github.com/akshat151/RecipeArchive.git`.
