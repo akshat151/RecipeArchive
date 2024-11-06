@@ -38,10 +38,10 @@ An iOS app built with SwiftUI that lets you explore food recipes from around the
 
 ## Time Spent
 
-I allocated approximately 7 hours to this project:
-- **Planning and Design** (1 hours): Outlined the app architecture and decided on the technology stack.
-- **Coding** (5 hours): Developed and refined the core functionality and UI.
-- **Testing** (1 hours): Created unit tests, executed testing sessions, and resolved bugs.
+I allocated approximately 5 hours to this project:
+- **Planning and Design** (0.5 hours): Outlined the app architecture and decided on the technology stack.
+- **Coding** (4 hours): Developed and refined the core functionality and UI.
+- **Testing** (0.5 hours): Created unit tests, executed testing sessions, and resolved bugs.
 
 ## Trade-offs and Decisions
 
